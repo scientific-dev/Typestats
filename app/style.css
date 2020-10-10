@@ -1,0 +1,159 @@
+@font-face{
+    font-family: 'Alata';
+    src: url('../assets/alata-regular.ttf') format('truetype');
+}
+
+body{
+    background-color: #262626;
+    font-family: Alata;
+    color: white;
+}
+
+.header{
+    position: relative;
+    left: 20px;
+    width: 90%;
+}
+
+.header h1{
+    font-size: 60px;
+    font-weight: lighter;
+}
+
+.description{
+    position: relative;
+    top: -30px;
+}
+
+.header button{
+    font-family: Alata;
+    border: none;
+    border-radius: 3px;
+    background-color: transparent;
+    color: white;
+    float: right;
+    padding: 20px 30px;
+    position: relative;
+    top: -100px;
+    outline: none;
+}
+
+.header button:hover{
+    color: #16161d;
+    background: white;
+}
+
+.sentence{
+    border-radius: 2px;
+    width: 90%;
+    padding: 10px;
+    font-weight: lighter;
+    font-family: consolas;
+    color: white;
+    background-color: #383838;
+    position: relative;
+    left: 18px;
+    top: 4px;
+}
+
+#input{
+    font-family: Alata;
+    font-weight: lighter;
+    color: white;
+    width: 93%;
+    padding: 10px;
+    border: none;
+    border-radius: 2px;
+    background-color: transparent;
+    border-bottom: 2px red solid;
+    position: relative;
+    left: 18px;
+    top: 20px;
+    outline: none;
+}
+
+.stats{
+    position: relative;
+    left: 18px;
+    width: 90%;
+    top: 30px;
+}
+
+.stats font{
+    text-align: center;
+}
+
+#pending-words, #wpm{
+    font-size: 70px;
+}
+
+#total-words, #unit, .overall font{
+    font-size: 20px;
+}
+
+.overall{
+    position: relative;
+    top: -220px;
+    left: 210px;
+    width: 80%;
+}
+
+.bar{
+    border-radius: 50px;
+    height: 10px;
+    width: 1%;
+    background-color: #4287f5;
+    position: relative;
+    top: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+}
+
+.overall-sub font{
+    font-weight: lighter;
+    font-size: 16px;
+}
+
+.glow {
+    font-size: 80px;
+    color: #fff;
+    text-shadow: 0 0 20px #fff,  0 0 50px #87b5ff, 0 0 60px #4a8fff, 0 0 70px #0866ff;
+}
+
+.titlebar{
+    background-color: #444444;
+    width: 100%;
+    height: 25px;
+    z-index: 5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    -webkit-app-region: drag;
+}
+
+.titlebar font{
+    opacity: 0.7;
+    font-size: 15px;
+    font-family: Alata;
+    position: relative;
+    left: 3px;
+    top: 1px;
+}
+
+.titlebar button{
+    -webkit-app-region: no-drag;
+    float: right;
+    height: 25px;
+    width: 25px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+.titlebar button:hover{
+    background-color: red;
+}
