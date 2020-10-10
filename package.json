@@ -1,0 +1,17 @@
+{
+  "name": "typestats",
+  "version": "2.0.0",
+  "description": "Simple typeracer app!",
+  "main": "./index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Decimal Development",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^10.1.3",
+    "electron-packager": "^15.1.0"
+  }
+}
