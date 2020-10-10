@@ -1,0 +1,154 @@
+<html>
+    <head>
+        <title>Typestats</title>
+        <link rel="stylesheet" type="text/css" href="./style.css">
+
+        <script>
+            const { ipcRenderer } = require('electron');
+            const sentences = require('./sentences.json');
+
+            const generateSentence = () => sentences[Math.floor(Math.random() * sentences.length)];
+            const $ = (id) => document.getElementById(id);
+            const info = (msg, warn) => {
+                $('status').innerHTML = msg;
+                $('status').style.color = warn ? 'white' : 'red';
+            };
+
+            let sentence = null;
+            let sentenceArray = null;
+            let isStarted = false;
+            let startedAt = 0;
+
+            const start = () => {
+                if(isStarted) return info('Typerace has been already started!');
+                
+                sentence = generateSentence();
+                sentenceArray = sentence.split('');
+                isStarted = true;
+
+                $('sentence').innerHTML = sentence;
+                $('total-words').innerHTML = `/${sentence.length}`;
+                startedAt = Date.now();
+                $('input').focus();
+                info('Started...', true);
+            };
+
+            const end = () => {
+                if(!isStarted) return info('Typerace has not been started!');
+
+                info('Typeracer has been ended!');
+                isStarted = false;
+                startedAt = 0;
+                sentence = null;
+                sentenceArray = null;
+            };
+            
+            const load = () => {
+                $('input').addEventListener('keypress', (key) => {
+                    if(key.keyCode != 13) return;
+                    if(!isStarted) return info('Click start to start the typerace!');
+
+                    let userInput = $('input').value;
+                    let arr = userInput.split('');
+                    if(!userInput.length) return info('No sentence provided!');
+
+                    let timeTook = Math.floor(Date.now() - startedAt);
+
+                    let match = 0;
+                    for(let i = 0; i < sentenceArray.length; i++){
+                        if(sentenceArray[i] == arr[i]) match++
+                    };
+                    match = Math.floor((match/sentenceArray.length)*100);
+
+                    let shouldHaveEndedAt = Math.floor(((userInput.length/5)/40)*60);
+                    let wpm = Math.floor((userInput.length/5)/((Date.now() - startedAt)/60000));
+
+                    $('match-stats').innerHTML = match;
+                    $('should-ended-at-stats').innerHTML = shouldHaveEndedAt;
+                    $('time-took-stats').innerHTML = Math.floor(timeTook/1000);
+                    $('wpm-stats').innerHTML = wpm;
+                    $('input').value = '';
+
+                    info('Typerace Ended!', true);
+
+                    isStarted = false;
+                    startedAt = 0;
+                    sentence = null;
+                    sentenceArray = null;
+                });
+
+                // Just a warning if the user make's mistake...
+                // In upcomming times, i will try to make to detect the postion where user makes mistake!
+                $('input').addEventListener('keypress', () => {
+                    if(!isStarted) return;
+
+                    let userInput = $('input').value;
+                    let arr = userInput.split('');
+                    let wpm = Math.floor((userInput.length/5)/((Date.now() - startedAt)/60000));
+
+                    $('pending-words').innerHTML = arr.length+1;
+                    $('wpm').innerHTML = wpm;
+
+                    if(!arr.length) return info('No mistakes found!', true);
+                    if(sentenceArray[arr.length - 1] != arr[arr.length - 1]) return info(`Mistake found!`);
+                    
+                    let match = 0;
+                    for(let i = 0; i < sentenceArray.length; i++){
+                        if(sentenceArray[i] == arr[i]) match++
+                    };
+                    match = Math.floor((match/sentenceArray.length)*90);
+                    $('overall-bar').style.width = `${match}%`;
+
+                    info('No mistakes found!', true);
+                });
+            };
+
+        </script>
+    </head>
+
+    <body onload="load()">
+        <div class="titlebar">
+            <font>Typestats</font>
+            <button class="close" onclick="ipcRenderer.sendSync('quit')"><svg aria-hidden="false" width="12" height="12" viewBox="0 0 12 12"><polygon fill="currentColor" fill-rule="evenodd" points="11 1.576 6.583 6 11 10.424 10.424 11 6 6.583 1.576 11 1 10.424 5.417 6 1 1.576 1.576 1 6 5.417 10.424 1"></polygon></svg></button>
+            <button class="close" onclick="ipcRenderer.send('minimize')"><svg aria-hidden="false" width="12" height="12" viewBox="0 0 12 12"><rect fill="currentColor" width="10" height="1" x="1" y="6"></rect></svg></button>
+        </div>
+
+        <div class="header" style="position: relative; top: 20px;">
+            <h1>Typestats</h1>
+            <font class="description" id="status">Check your typing stats now!</font>
+            <button onclick="end()">END</button>
+            <button onclick="start()">START</button>
+        </div>
+
+        <div class="workspace">
+            <div class="sentence"><font id="sentence">Click start to display sentence!</font></div>
+
+            <input type="text" placeholder="Your sentence here..." id="input" autofocus>
+        </div>
+
+        <div class="stats">
+            <div class="pending-meter">
+                <font id="pending-words">0</font><font id="total-words">/0</font><br>
+                <font>Pending meter</font>
+            </div>
+            <div class="wpm-meter">
+                <font id="wpm">0</font><font class="unit"> wpm</font><br>
+                <font>WPM meter</font>
+            </div>
+            <div class="overall">
+                <font style="font-size: 30px;">Overall progress</font>
+                <div class="bar" id="overall-bar"></div>
+            </div>
+            <div class="overall" style="top: -200px;">
+                <font style="font-size: 30px;">Overall stats</font><br>
+                
+                <div class="overall-sub">
+                    <font>Matching: </font><font id="match-stats">0</font><font>%</font><br>
+                    <font>Should have ended at: </font><font id="should-ended-at-stats">0</font><font>s</font><br>
+                    <font>Time took to complete: </font><font id="time-took-stats">0</font><font>s</font><br>
+                    <font>WPM: </font><font id="wpm-stats">0</font><font> words</font>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
